@@ -6,6 +6,7 @@ class Cms::UsersController < ApplicationController
   model Cms::User
 
   navi_view "cms/main/navi"
+  menu_view "cms/users/menu" ### TODO 2コントローラー
 
   private
     def set_crumbs
@@ -30,5 +31,34 @@ class Cms::UsersController < ApplicationController
       @item.add_to_set(cms_role_ids: other_role_ids)
       raise "403" unless @item.allowed?(:edit, @cur_user, site: @cur_site)
       render_update @item.update
+    end
+
+    ### TODO 2コントローラー
+    # 要調整、コード量が多くなるならconcernにまとめたりしたほうがよいかもしれない
+    # 似たような箇所は History::Cms::LogsController
+
+    def download
+
+      ### TODO 3ダウンロードロジック
+      # send csv
+
+      csv = "test"
+      send_data csv.encode("SJIS"), filename: "test.csv"
+    end
+
+    def import
+      return if request.get? # if get request, render view only
+
+      ### TODO 4インポートロジック
+      # CSVからユーザーをインポートする
+      # 以下のような感じ?
+      #
+      # csv.each do |row|
+      #
+      #   update Cms::User collection from row
+      #
+      # end
+      #
+
     end
 end

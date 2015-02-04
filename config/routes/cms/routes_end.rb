@@ -4,6 +4,18 @@ SS::Application.routes.draw do
     get :delete, :on => :member
   end
 
+  ### TODO 1ルーティング
+  # add routing download and import to user
+  # 要調整
+  concern :download do
+    get :download, :on => :collection
+  end
+
+  concern :import do
+    get :import, :on => :collection
+  end
+  ###
+
   namespace "cms", path: ".:site" do
     get "/" => "main#index", as: :main
     get "preview(:preview_date)/(*path)" => "preview#index", as: :preview
@@ -17,7 +29,7 @@ SS::Application.routes.draw do
     get "/" => "main#index"
     resource  :site, concerns: :deletion
     resources :roles, concerns: :deletion
-    resources :users, concerns: :deletion
+    resources :users, concerns: [:deletion, :download, :import] ### TODO 1ルーティング
     resources :groups, concerns: :deletion
     resources :members, concerns: :deletion
     resources :contents, path: "contents/(:mod)"
