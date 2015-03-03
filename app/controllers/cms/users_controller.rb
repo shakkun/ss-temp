@@ -38,12 +38,20 @@ class Cms::UsersController < ApplicationController
     # 似たような箇所は History::Cms::LogsController
 
     def download
+      require "csv"
 
-      ### TODO 3ダウンロードロジック
-      # send csv
+      header = ["name", "email", "type", "groups", "cms_roles"]
 
-      csv = "test"
-      send_data csv.encode("SJIS"), filename: "test.csv"
+      group_ids = { "1" => "シラサギ市", "2" => "シラサギ市/企画政策部", "3" => "シラサギ市/企画政策部/広報課", "4" => "シラサギ市/企画政策部/政策課", "5" => "シラサギ市/危機管理部", "6" => "シラサギ市/危機管理部/管理課", "7" => "シラサギ市/危機管理部/防災課" }
+      cms_role_ids = { "1" => "サイト管理者", "2" => "記事編集権限" }
+
+      CSV.generate(list = "", :headers => header, :write_headers => true) do |csv|
+        @model.each do |u|
+          csv << [u.name, u.email, group_ids["#{u.group_ids.join("\n")}"], cms_role_ids["#{u.cms_role_ids.join("\n")}"]]
+        end
+      end
+      
+      send_data(list, :type => 'text/csv', :filename => 'users.csv')
     end
 
     def import
